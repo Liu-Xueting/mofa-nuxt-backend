@@ -1,0 +1,1049 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// 通用状态枚举
+enum CommonStatusType {
+  ACTIVE
+  INACTIVE
+  FORBIDDEN
+  DELETED
+}
+
+// #region 用户和权限系统
+// 用户状态
+enum UserStatusType {
+  ACTIVE
+  INACTIVE
+  FORBIDDEN
+}
+
+// 用户
+model User {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  username    String         @unique
+  password    String
+  avatar      String?
+  nickname    String?
+  description String?
+  email       String?
+  phone       String?        @unique
+  birthday    DateTime?
+  gender      String?
+  status      UserStatusType @default(ACTIVE)
+  roles       String[]
+  agentId     String?        @map("agent_id") @db.ObjectId
+  lastLoginIp String?        @map("last_login_ip")
+  lastLoginAt DateTime?      @map("last_login_at")
+  isDeleted   Boolean        @default(false) @map("is_deleted")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  createdBy   String?        @map("created_by") @db.ObjectId
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  updatedBy   String?        @map("updated_by") @db.ObjectId
+
+  agent                   Agent?            @relation(fields: [agentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  shopApplyCreators       ShopApply[]       @relation(name: "ShopApply:creator")
+  shopApplyUpdaters       ShopApply[]       @relation(name: "ShopApply:updater")
+  roleCreators            Role[]            @relation(name: "Role:creator")
+  roleUpdaters            Role[]            @relation(name: "Role:updater")
+  permissionCreators      Permission[]      @relation(name: "Permission:creator")
+  permissionUpdaters      Permission[]      @relation(name: "Permission:updater")
+  shopCreators            Shop[]            @relation(name: "Shop:creator")
+  shopUpdaters            Shop[]            @relation(name: "Shop:updater")
+  shopTagsCreators        ShopTag[]         @relation(name: "ShopTag:creator")
+  shopTagsUpdaters        ShopTag[]         @relation(name: "ShopTag:updater")
+  shopApplies             ShopApply[]
+  retailerApplies         RetailerApply[]
+  retailerApplyCreators   RetailerApply[]   @relation(name: "RetailerApply:creator")
+  retailerApplyUpdaters   RetailerApply[]   @relation(name: "RetailerApply:updater")
+  shopReceiptCreators     ShopReceipt[]     @relation(name: "ShopReceipt:creator")
+  shopReceiptUpdaters     ShopReceipt[]     @relation(name: "ShopReceipt:updater")
+  shopCouponsCreators     ShopCoupon[]      @relation(name: "ShopCoupon:creator")
+  shopCouponsUpdaters     ShopCoupon[]      @relation(name: "ShopCoupon:updater")
+  productCatalogCreators  ProductCatalog[]  @relation(name: "ProductCatalog:creator")
+  productCatalogUpdaters  ProductCatalog[]  @relation(name: "ProductCatalog:updater")
+  productTagCreators      ProductTag[]      @relation(name: "ProductTag:creator")
+  productTagUpdaters      ProductTag[]      @relation(name: "ProductTag:updater")
+  productGroupCreators    ProductGroup[]    @relation(name: "ProductGroup:creator")
+  productGroupUpdaters    ProductGroup[]    @relation(name: "ProductGroup:updater")
+  productCreators         Product[]         @relation(name: "Product:creator")
+  productUpdaters         Product[]         @relation(name: "Product:updater")
+  skuCreators             Sku[]             @relation(name: "Sku:creator")
+  skuUpdaters             Sku[]             @relation(name: "Sku:updater")
+  resourceCatalogCreators ResourceCatalog[] @relation(name: "ResourceCatalog:creator")
+  resourceCatalogUpdaters ResourceCatalog[] @relation(name: "ResourceCatalog:updater")
+  resourceCatalogs        ResourceCatalog[]
+  resourceCreators        Resource[]        @relation(name: "Resource:creator")
+  resourceUpdaters        Resource[]        @relation(name: "Resource:updater")
+  orders                  Order[]
+  orderCreators           Order[]           @relation(name: "Order:creator")
+  orderUpdaters           Order[]           @relation(name: "Order:updater")
+  addresses               Address[]
+  afterSaleCreators       AfterSale[]       @relation(name: "AfterSale:creator")
+  afterSaleUpdaters       AfterSale[]       @relation(name: "AfterSale:updater")
+  agentCreators           Agent[]           @relation(name: "Agent:creator")
+  agentUpdaters           Agent[]           @relation(name: "Agent:updater")
+  agentReceiptCreators    AgentReceipt[]    @relation(name: "AgentReceipt:creator")
+  agentReceiptUpdaters    AgentReceipt[]    @relation(name: "AgentReceipt:updater")
+  userContacts            UserContact[]
+  customerServiceCreators CustomerService[] @relation(name: "CustomerService:creator")
+  customerServiceUpdaters CustomerService[] @relation(name: "CustomerService:updater")
+  follows                 Follow[]
+  favoriteItems           FavoriteItem[]
+  CartItem                CartItem[]
+  orderComments           OrderComment[]
+  orderCommentCreators    OrderComment[]    @relation(name: "OrderComment:creator")
+  orderCommentUpdaters    OrderComment[]    @relation(name: "OrderComment:updater")
+  deliveryCreators        Delivery[]        @relation(name: "Delivery:creator")
+  deliveryUpdaters        Delivery[]        @relation(name: "Delivery:updater")
+  articles                Article[]
+  articleCreators         Article[]         @relation(name: "Article:creator")
+  articleUpdaters         Article[]         @relation(name: "Article:updater")
+  notifications           Notification[]
+  sessions                Session[]
+  accounts                Account[]
+  agentApplies            AgentApply[]
+  agentApplyCreators      AgentApply[]      @relation(name: "AgentApply:creator")
+  agentApplyUpdaters      AgentApply[]      @relation(name: "AgentApply:updater")
+  favoriteItemCreators    FavoriteItem[]    @relation(name: "FavoriteItem:creator")
+  favoriteItemUpdaters    FavoriteItem[]    @relation(name: "FavoriteItem:updater")
+  cartItemCreators        CartItem[]        @relation(name: "CartItem:creator")
+  cartItemUpdaters        CartItem[]        @relation(name: "CartItem:updater")
+  transactionCreators     Transaction[]     @relation(name: "Transaction:creator")
+  transactionUpdaters     Transaction[]     @relation(name: "Transaction:updater")
+  menuCreators            Menu[]            @relation(name: "Menu:creator")
+  menuUpdaters            Menu[]            @relation(name: "Menu:updater")
+
+  @@map("user")
+}
+
+// 角色
+model Role {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  permissions String[]
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  creator User? @relation(name: "Role:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "Role:updater", fields: [updatedBy], references: [id])
+
+  @@map("role")
+}
+
+// 权限
+model Permission {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  permKey     String   @unique @map("perm_key")
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  creator User?  @relation(name: "Permission:creator", fields: [createdBy], references: [id])
+  updater User?  @relation(name: "Permission:updater", fields: [updatedBy], references: [id])
+  menus   Menu[]
+
+  @@map("permission")
+}
+
+// 菜单类型
+enum MenuType {
+  MENU
+  BUTTON
+}
+
+// 菜单
+model Menu {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  permissionId String?  @map("permission_id") @db.ObjectId
+  name         String
+  description  String?
+  type         String?
+  icon         String?
+  path         String?
+  parentId     String?  @map("parent_id") @db.ObjectId
+  order        Int?
+  isExternal   Boolean? @map("is_external")
+  isVisible    Boolean? @map("is_visible")
+  isDeleted    Boolean  @default(false) @map("is_deleted")
+  createdAt    DateTime @default(now()) @map("created_at")
+  createdBy    String?  @map("created_by") @db.ObjectId
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  updatedBy    String?  @map("updated_by") @db.ObjectId
+
+  permission Permission? @relation(fields: [permissionId], references: [id])
+  parent     Menu?       @relation(name: "Menu:parent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children   Menu[]      @relation(name: "Menu:parent")
+  creator    User?       @relation(name: "Menu:creator", fields: [createdBy], references: [id])
+  updater    User?       @relation(name: "Menu:updater", fields: [updatedBy], references: [id])
+
+  @@map("menu")
+}
+
+// NextAuth 账户
+model Account {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String   @map("user_id") @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String   @map("provider_account_id")
+  refresh_token     String?  @db.String
+  access_token      String?  @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.String
+  session_state     String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
+  @@map("account")
+}
+
+// NextAuth Session
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id") @db.ObjectId
+  expires      DateTime
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("session")
+}
+
+// NextAuth 验证码
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_token")
+}
+
+// #endregion
+
+// #region 商城系统：店铺
+// 店铺状态
+enum ShopStatusType {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// 店铺
+model Shop {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   @map("user_id") @db.ObjectId
+  name          String
+  description   String?
+  qualification String?
+  province      String?
+  city          String?
+  district      String?
+  street        String?
+  address       String?
+  status        String?
+  tags          String[]
+  remark        String?
+  isDeleted     Boolean  @default(false) @map("is_deleted")
+  createdAt     DateTime @default(now()) @map("created_at")
+  createdBy     String?  @map("created_by") @db.ObjectId
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  updatedBy     String?  @map("updated_by") @db.ObjectId
+
+  shopCoupons ShopCoupon[]
+  shopApplies ShopApply[]
+
+  creator          User?             @relation(name: "Shop:creator", fields: [createdBy], references: [id])
+  updater          User?             @relation(name: "Shop:updater", fields: [updatedBy], references: [id])
+  shopReceipts     ShopReceipt[]
+  userContacts     UserContact[]
+  customerServices CustomerService[]
+  follows          Follow[]
+
+  @@map("shop")
+}
+
+// 店铺标签
+model ShopTag {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  creator User? @relation(name: "ShopTag:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "ShopTag:updater", fields: [updatedBy], references: [id])
+
+  @@map("shop_tag")
+}
+
+// 供应商优惠券
+model ShopCoupon {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  shopId      String   @map("shop_id") @db.ObjectId
+  name        String
+  description String?
+  startAt     DateTime @map("start_at")
+  endAt       DateTime @map("end_at")
+  type        String?
+  status      String?
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  shop    Shop  @relation(fields: [shopId], references: [id])
+  creator User? @relation(name: "ShopCoupon:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "ShopCoupon:updater", fields: [updatedBy], references: [id])
+
+  @@map("shop_coupon")
+}
+
+// 供应商申请状态
+enum ApplyStatusType {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// 供应商申请
+model ShopApply {
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String          @map("user_id") @db.ObjectId
+  realName  String          @map("real_name")
+  shopName  String          @map("shop_name")
+  reason    String
+  phone     String
+  resources String[]
+  status    ApplyStatusType @default(PENDING)
+  shopId    String?         @map("shop_id") @db.ObjectId
+  remark    String?
+  isDeleted Boolean         @default(false) @map("is_deleted")
+  createdAt DateTime        @default(now()) @map("created_at")
+  createdBy String?         @map("created_by") @db.ObjectId
+  updatedAt DateTime        @updatedAt @map("updated_at")
+  updatedBy String?         @map("updated_by") @db.ObjectId
+
+  user    User? @relation(fields: [userId], references: [id])
+  shop    Shop? @relation(fields: [shopId], references: [id])
+  creator User? @relation(name: "ShopApply:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "ShopApply:updater", fields: [updatedBy], references: [id])
+}
+
+// 门店申请
+model RetailerApply {
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String          @map("user_id") @db.ObjectId
+  realName     String          @map("real_name")
+  retailerName String          @map("retailer_name")
+  reason       String
+  phone        String
+  resources    String[]
+  status       ApplyStatusType @default(PENDING)
+  remark       String?
+  isDeleted    Boolean         @default(false) @map("is_deleted")
+  createdAt    DateTime        @default(now()) @map("created_at")
+  createdBy    String?         @map("created_by") @db.ObjectId
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+  updatedBy    String?         @map("updated_by") @db.ObjectId
+
+  user    User? @relation(fields: [userId], references: [id])
+  creator User? @relation(name: "RetailerApply:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "RetailerApply:updater", fields: [updatedBy], references: [id])
+
+  @@map("retailer_apply")
+}
+
+// 店铺收款
+model ShopReceipt {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  shopId    String   @map("shop_id") @db.ObjectId
+  amount    String
+  type      String?
+  status    String?
+  remark    String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  shop    Shop  @relation(fields: [shopId], references: [id])
+  creator User? @relation(name: "ShopReceipt:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "ShopReceipt:updater", fields: [updatedBy], references: [id])
+
+  @@map("shop_receipt")
+}
+
+// #endregion
+
+// #region 商城系统：商品
+
+// 商品状态
+enum ProductStatusType {
+  ACTIVE
+  INACTIVE
+}
+// 商品
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  price       Float
+  shopId      String   @map("shop_id") @db.ObjectId
+  groupId     String?  @map("group_id") @db.ObjectId
+  categories  String[]
+  tags        String[]
+  status      ProductStatusType   @default(ACTIVE)
+  deliveryId  String?  @map("delivery_id") @db.ObjectId
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  creator User? @relation(name: "Product:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "Product:updater", fields: [updatedBy], references: [id])
+
+  @@map("product")
+}
+
+// SKU
+model Sku {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId   String   @map("product_id") @db.ObjectId
+  name        String
+  description String?
+  price       Float
+  stock       Int
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  creator       User?          @relation(name: "Sku:creator", fields: [createdBy], references: [id])
+  updater       User?          @relation(name: "Sku:updater", fields: [updatedBy], references: [id])
+  orderItems    OrderItem[]
+  favoriteItems FavoriteItem[]
+  CartItem      CartItem[]
+
+  @@map("sku")
+}
+
+// 商品分组
+model ProductGroup {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  parentId    String?  @map("parent_id") @db.ObjectId
+  isLeaf      Boolean  @default(true) @map("is_leaf")
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  parent   ProductGroup?  @relation(name: "ProductGroup:parent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children ProductGroup[] @relation(name: "ProductGroup:parent")
+  creator  User?          @relation(name: "ProductGroup:creator", fields: [createdBy], references: [id])
+  updater  User?          @relation(name: "ProductGroup:updater", fields: [updatedBy], references: [id])
+
+  @@map("product_group")
+}
+
+// 商品分类
+model ProductCategory {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  @@map("product_category")
+}
+
+// 商品目录
+model ProductCatalog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  parentId    String?  @map("parent_id") @db.ObjectId
+  isLeaf      Boolean  @default(true) @map("is_leaf")
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  parent   ProductCatalog?  @relation(name: "ProductCatalog:parent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children ProductCatalog[] @relation(name: "ProductCatalog:parent")
+  creator  User?            @relation(name: "ProductCatalog:creator", fields: [createdBy], references: [id])
+  updater  User?            @relation(name: "ProductCatalog:updater", fields: [updatedBy], references: [id])
+
+  @@map("product_catalog")
+}
+
+// 商品标签
+model ProductTag {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  creator User? @relation(name: "ProductTag:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "ProductTag:updater", fields: [updatedBy], references: [id])
+
+  @@map("product_tag")
+}
+
+// #endregion
+
+// #region 商城系统：资源
+// 资源目录
+model ResourceCatalog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  parentId    String?  @map("parent_id") @db.ObjectId
+  userId      String   @map("user_id") @db.ObjectId
+  name        String
+  description String?
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  parent    ResourceCatalog?  @relation(name: "ResourceCatalog:parent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children  ResourceCatalog[] @relation(name: "ResourceCatalog:parent")
+  user      User              @relation(fields: [userId], references: [id])
+  creator   User?             @relation(name: "ResourceCatalog:creator", fields: [createdBy], references: [id])
+  updater   User?             @relation(name: "ResourceCatalog:updater", fields: [updatedBy], references: [id])
+  resources Resource[]
+
+  @@map("resource_catalog")
+}
+
+// 资源
+model Resource {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  catalogId   String   @map("catalog_id") @db.ObjectId
+  key         String
+  description String?
+  metadata    Json?
+  size        Int
+  url         String?
+  bucket      String
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  catalog ResourceCatalog @relation(fields: [catalogId], references: [id])
+  creator User?           @relation(name: "Resource:creator", fields: [createdBy], references: [id])
+  updater User?           @relation(name: "Resource:updater", fields: [updatedBy], references: [id])
+
+  @@map("resource")
+}
+
+// #endregion
+
+// #region 商城系统：订单
+// 订单状态
+enum OrderStatusType {
+  PENDING
+  PAID
+  DELIVERED
+  RECEIVED
+  CANCELED
+  REFUNDED
+}
+
+// 订单
+model Order {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String          @map("user_id") @db.ObjectId
+  addressId     String          @map("address_id") @db.ObjectId
+  transactionId String          @map("transaction_id") @db.ObjectId
+  description   String?
+  totalAmount   String          @map("total_amount")
+  status        OrderStatusType @default(PENDING)
+  orderedAt     DateTime        @map("ordered_at")
+  paidAt        DateTime?       @map("paid_at")
+  remark        String?
+  isDeleted     Boolean         @default(false) @map("is_deleted")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  createdBy     String?         @map("created_by") @db.ObjectId
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  updatedBy     String?         @map("updated_by") @db.ObjectId
+
+  user        User        @relation(fields: [userId], references: [id])
+  address     Address     @relation(fields: [addressId], references: [id])
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  items       OrderItem[]
+  creator     User?       @relation(name: "Order:creator", fields: [createdBy], references: [id])
+  updater     User?       @relation(name: "Order:updater", fields: [updatedBy], references: [id])
+  afterSales  AfterSale[]
+  deliveries  Delivery[]
+
+  @@map("order")
+}
+
+// 订单项
+model OrderItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @map("order_id") @db.ObjectId
+  skuId     String   @map("sku_id") @db.ObjectId
+  quantity  Int
+  status    String?
+  remark    String?
+  discount  String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  order         Order          @relation(fields: [orderId], references: [id])
+  sku           Sku            @relation(fields: [skuId], references: [id])
+  orderComments OrderComment[]
+
+  @@map("order_item")
+}
+
+// 地址
+model Address {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @map("user_id") @db.ObjectId
+  recipient String
+  phone     String
+  province  String?
+  city      String?
+  district  String?
+  street    String?
+  address   String
+  isDefault Boolean  @default(false) @map("is_default")
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user   User    @relation(fields: [userId], references: [id])
+  orders Order[]
+
+  @@map("address")
+}
+
+// 物流
+model Delivery {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @map("order_id") @db.ObjectId
+  company   String
+  number    String
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  order         Order          @relation(fields: [orderId], references: [id])
+  deliveryItems DeliveryItem[]
+  creator       User?          @relation(name: "Delivery:creator", fields: [createdBy], references: [id])
+  updater       User?          @relation(name: "Delivery:updater", fields: [updatedBy], references: [id])
+
+  @@map("delivery")
+}
+
+// 物流项
+model DeliveryItem {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  deliveryId   String   @map("delivery_id") @db.ObjectId
+  status       String?
+  deliveryTime DateTime @map("delivery_time")
+  isDeleted    Boolean  @default(false) @map("is_deleted")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  delivery Delivery @relation(fields: [deliveryId], references: [id])
+
+  @@map("delivery_item")
+}
+
+// 交易
+model Transaction {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  amount    String
+  time      DateTime
+  type      String?
+  status    String?
+  remark    String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  orders  Order[]
+  creator User?   @relation(name: "Transaction:creator", fields: [createdBy], references: [id])
+  updater User?   @relation(name: "Transaction:updater", fields: [updatedBy], references: [id])
+
+  @@map("transaction")
+}
+
+// 售后
+model AfterSale {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId     String   @map("order_id") @db.ObjectId
+  type        String?
+  status      String?
+  reason      String?
+  handle_time DateTime @map("handle_time")
+  description String?
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  order   Order @relation(fields: [orderId], references: [id])
+  creator User? @relation(name: "AfterSale:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "AfterSale:updater", fields: [updatedBy], references: [id])
+
+  @@map("after_sale")
+}
+
+// 订单项评论
+model OrderComment {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderItemId String   @map("order_item_id") @db.ObjectId
+  userId      String   @map("user_id") @db.ObjectId
+  content     String
+  resources   String[]
+  status      String?
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+  creator   User?     @relation(name: "OrderComment:creator", fields: [createdBy], references: [id])
+  updater   User?     @relation(name: "OrderComment:updater", fields: [updatedBy], references: [id])
+
+  @@map("order_comment")
+}
+
+// #endregion
+
+// #region 商城系统：关注收藏
+// 关注
+model Follow {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @map("user_id") @db.ObjectId
+  shopId    String?  @map("shop_id") @db.ObjectId
+  status    String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User  @relation(fields: [userId], references: [id])
+  shop Shop? @relation(fields: [shopId], references: [id])
+
+  @@map("follow")
+}
+
+// 收藏项
+model FavoriteItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  skuId     String   @map("sku_id") @db.ObjectId
+  userId    String   @map("user_id") @db.ObjectId
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  user    User  @relation(fields: [userId], references: [id])
+  sku     Sku   @relation(fields: [skuId], references: [id])
+  creator User? @relation(name: "FavoriteItem:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "FavoriteItem:updater", fields: [updatedBy], references: [id])
+
+  @@map("favorite_item")
+}
+
+// 购物车项目
+model CartItem {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  skuId      String   @map("sku_id") @db.ObjectId
+  userId     String   @map("user_id") @db.ObjectId
+  status     String?
+  quantity   Int
+  price      String
+  totalPrice String   @map("total_price")
+  isDeleted  Boolean  @default(false) @map("is_deleted")
+  createdAt  DateTime @default(now()) @map("created_at")
+  createdBy  String?  @map("created_by") @db.ObjectId
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  updatedBy  String?  @map("updated_by") @db.ObjectId
+
+  user    User  @relation(fields: [userId], references: [id])
+  sku     Sku   @relation(fields: [skuId], references: [id])
+  creator User? @relation(name: "CartItem:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "CartItem:updater", fields: [updatedBy], references: [id])
+
+  @@map("cart_item")
+}
+
+// #endregion
+
+// #region 商城系统：客服系统
+// 联系信息
+model UserContact {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   @map("user_id") @db.ObjectId
+  shopId        String   @map("shop_id") @db.ObjectId
+  lastContactAt DateTime @map("last_contact_at")
+  isDeleted     Boolean  @default(false) @map("is_deleted")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user         User          @relation(fields: [userId], references: [id])
+  shop         Shop          @relation(fields: [shopId], references: [id])
+  chatMessages ChatMessage[]
+
+  @@map("user_contact")
+}
+
+// 客服
+model CustomerService {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  shopId      String   @map("shop_id") @db.ObjectId
+  name        String
+  description String?
+  phone       String?
+  email       String?
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   String?  @map("created_by") @db.ObjectId
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by") @db.ObjectId
+
+  shop    Shop  @relation(fields: [shopId], references: [id])
+  creator User? @relation(name: "CustomerService:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "CustomerService:updater", fields: [updatedBy], references: [id])
+
+  @@map("customer_service")
+}
+
+// 聊天信息
+model ChatMessage {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userContactId String   @map("user_contact_id") @db.ObjectId
+  content       String
+  isDeleted     Boolean  @default(false) @map("is_deleted")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  userContacts UserContact @relation(fields: [userContactId], references: [id])
+
+  @@map("chat_message")
+}
+
+// #endregion
+
+// #region 商城系统：资讯和推送
+// 文章
+model Article {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @map("user_id") @db.ObjectId
+  title     String
+  content   String?
+  tags      String[]
+  status    String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  user    User  @relation(fields: [userId], references: [id])
+  creator User? @relation(name: "Article:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "Article:updater", fields: [updatedBy], references: [id])
+
+  @@map("article")
+}
+
+// 通知
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @map("user_id") @db.ObjectId
+  title     String
+  content   String?
+  actions   Json[]
+  type      String?
+  status    String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notification")
+}
+
+// #region 代理系统
+// 代理
+model Agent {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  phone     String?
+  province  String?
+  city      String?
+  district  String?
+  street    String?
+  address   String?
+  remark    String?
+  status    String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  creator       User?          @relation(name: "Agent:creator", fields: [createdBy], references: [id])
+  updater       User?          @relation(name: "Agent:updater", fields: [updatedBy], references: [id])
+  users         User[]
+  agentReceipts AgentReceipt[]
+  agentApplies  AgentApply[]
+
+  @@map("agent")
+}
+
+// 代理申请
+model AgentApply {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @map("user_id") @db.ObjectId
+  realName  String   @map("real_name")
+  agentName String   @map("agent_name")
+  reason    String
+  phone     String
+  resources String[]
+  status    String?
+  agentId   String?  @map("agent_id") @db.ObjectId
+  remark    String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  user    User?  @relation(fields: [userId], references: [id])
+  agent   Agent? @relation(fields: [agentId], references: [id])
+  creator User?  @relation(name: "AgentApply:creator", fields: [createdBy], references: [id])
+  updater User?  @relation(name: "AgentApply:updater", fields: [updatedBy], references: [id])
+
+  @@map("agent_apply")
+}
+
+// 代理收款
+model AgentReceipt {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  agentId   String   @map("agent_id") @db.ObjectId
+  amount    String
+  type      String?
+  status    String?
+  remark    String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  agent   Agent @relation(fields: [agentId], references: [id])
+  creator User? @relation(name: "AgentReceipt:creator", fields: [createdBy], references: [id])
+  updater User? @relation(name: "AgentReceipt:updater", fields: [updatedBy], references: [id])
+
+  @@map("agent_receipt")
+}
+
+// #endregion
+
+// #region 发包系统
+// 发包方
+model Employer {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  userId    String   @map("user_id") @db.ObjectId
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  @@map("employer")
+}
+
+// 发包任务
+model AwardTask {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String?
+  price     Float
+  employer  String   @map("employer_id") @db.ObjectId
+  status    String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  @@map("award_task")
+}
+
+// 枪手
+model Hunter {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  phone     String?
+  address   String?
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by") @db.ObjectId
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.ObjectId
+
+  @@map("hunter")
+}
+
+// #endregion

@@ -1,0 +1,111 @@
+app_name: Mofa Admin
+menu:
+  switch_lang_success: Language switched successfully!
+  switch_theme_success: Theme switched successfully!
+login:
+  title: Welcome Back!
+  sub_title: Enter your username and password to log in
+  username_placeholder: Please enter username
+  password_placeholder: Please enter password
+  login_button: Login
+  remember_password: Remember Password
+  forget_password: Forgot Password
+  no_account_yet: No account yet?
+  register_button: Register
+  login_success: Login successful
+  login_failed: Login failed
+register:
+  title: Register Account
+  sub_title: Enter your username and password to register
+  username_placeholder: Please enter username
+  password_placeholder: Please enter password
+  email_placeholder: Please enter email
+  confirm_password_placeholder: Please confirm password
+  password_not_match: Passwords do not match
+  register_button: Register
+  has_account: Already have an account?
+  login_button: Login
+  register_success: Registration successful
+  register_failed: Registration failed
+admin:
+  title: Admin
+  dashboard:
+    title: Dashboard
+  user:
+    title: User Management
+    list:
+      title: User List
+    role:
+      title: Role List
+    permission:
+      title: Permission List
+  shop:
+    title: Supplier Management
+    list:
+      title: Shop List
+    apply:
+      title: Shop Application
+    coupon:
+      title: Coupon Management
+    resource:
+      title: Shop Resources
+  retailer:
+    title: Store Management
+    list:
+      title: Store List
+    apply:
+      title: Store Application
+  product:
+    title: Product Management
+    list:
+      title: Product List
+    group:
+      title: Product Groups
+    category:
+      title: Product Categories
+    tag:
+      title: Product Tags
+    catalog:
+      title: Product Catalog
+  order:
+    title: Order Management
+    list:
+      title: Order List
+    after_sale:
+      title: After-sales List
+    delivery:
+      title: Logistics List
+    comment:
+      title: Review List
+    address:
+      title: Address List
+  finance:
+    title: Financial Management
+    overview:
+      title: Financial Overview
+    transaction:
+      title: Transaction List
+    outcome:
+      title: Expense Statistics
+    shop_receipt:
+      title: Merchant Withdrawal
+    agent_receipt:
+      title: Agent Withdrawal
+  article:
+    title: Article Management
+    list:
+      title: Article List
+    comment:
+      title: Article Comments
+  agent:
+    title: Agent Management
+    list:
+      title: Agent List
+    apply:
+      title: Agent Application
+  system:
+    title: System Settings
+    menu:
+      title: Menu Management
+    dict:
+      title: Dictionary Management

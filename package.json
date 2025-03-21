@@ -1,0 +1,101 @@
+{
+  "name": "mofa-nuxt-backend",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.5.2",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "prepare": "simple-git-hooks && prisma generate",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "commitlint": "commitlint -e -V",
+    "studio": "prisma studio",
+    "db": "prisma generate"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.8.0",
+    "@aws-sdk/client-s3": "^3.758.0",
+    "@element-plus/icons-vue": "^2.3.1",
+    "@element-plus/nuxt": "^1.1.1",
+    "@iconify-json/fluent": "^1.2.14",
+    "@node-rs/argon2": "^2.0.2",
+    "@nuxt/icon": "^1.10.3",
+    "@nuxtjs/color-mode": "^3.5.2",
+    "@nuxtjs/device": "^3.2.4",
+    "@nuxtjs/i18n": "^9.2.1",
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
+    "@pinia/nuxt": "^0.10.1",
+    "@prisma/client": "^6.4.1",
+    "@scalar/nuxt": "0.2.202",
+    "@sidebase/nuxt-auth": "^0.10.0",
+    "@vueuse/core": "^12.7.0",
+    "@vueuse/integrations": "^12.7.0",
+    "@vueuse/nuxt": "^12.7.0",
+    "big.js": "^6.2.2",
+    "consola": "^3.4.0",
+    "dayjs": "^1.11.13",
+    "dayjs-nuxt": "^2.1.11",
+    "defu": "^6.1.4",
+    "echarts": "^5.6.0",
+    "element-plus": "^2.9.5",
+    "es-toolkit": "^1.32.0",
+    "next-auth": "4.21.1",
+    "nim-web-sdk-ng": "^10.8.1",
+    "nuxt": "^3.15.4",
+    "nuxt-echarts": "0.2.4",
+    "pinia": "^3.0.1",
+    "pinia-plugin-persistedstate": "^4.2.0",
+    "pinia-shared-state": "^1.0.1",
+    "qrcode": "^1.5.4",
+    "quill": "^2.0.3",
+    "rabbitmq-client": "^5.0.2",
+    "redis": "^4.7.0",
+    "swagger-jsdoc": "^6.2.8",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^4.3.0",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@commitlint/types": "^19.5.0",
+    "@nuxtjs/tailwindcss": "^6.13.1",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/big.js": "^6.2.2",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "daisyui": "^4.12.24",
+    "eslint": "^9.21.0",
+    "eslint-plugin-format": "^1.0.1",
+    "eslint-plugin-tailwindcss": "^3.18.0",
+    "lint-staged": "^15.4.3",
+    "lodash-unified": "^1.0.3",
+    "prisma": "^6.4.1",
+    "sass": "^1.85.1",
+    "simple-git-hooks": "^2.11.1",
+    "tailwindcss": "^3.4.17"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma"
+    ],
+    "patchedDependencies": {
+      "@scalar/nuxt": "patches/@scalar__nuxt.patch"
+    }
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged",
+    "commit-msg": "pnpm commitlint"
+  },
+  "lint-staged": {
+    "*": "pnpm lint"
+  }
+}

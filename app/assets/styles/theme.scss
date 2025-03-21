@@ -1,0 +1,27 @@
+$primary: #7480ff;
+$secondary: #ccc;
+$accent: #ccc;
+$neutral: #ccc;
+$base_100: #ccc;
+
+// ========== Tailwind CSS ==========
+// src: node_modules/element-plus/theme-chalk/src/common/var.scss
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      'base': $primary,
+    ),
+  )
+);
+@use 'element-plus/theme-chalk/src/dark/css-vars.scss' as *;
+@use 'element-plus/theme-chalk/src/index.scss' as *;
+
+// ========== DaisyUI ==========
+// Background color for the app
+[data-theme='light'] {
+  --b2: 98.5% 0 0;
+}
+
+[data-theme='dark'] {
+  --b2: 23.2607% 0.013807 253.100675;
+}

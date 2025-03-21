@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "PKief.material-icon-theme",
+    "dbaeumer.vscode-eslint",
+    "antfu.iconify",
+    "antfu.goto-alias",
+    "bradlc.vscode-tailwindcss",
+    "Vue.volar",
+    "naumovs.color-highlight",
+    "fill-labs.dependi",
+    "Prisma.prisma",
+    "nuxtr.nuxtr-vscode"
+  ]
+}

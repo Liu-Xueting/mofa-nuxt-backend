@@ -1,0 +1,48 @@
+x-default: &default
+  restart: unless-stopped
+  volumes:
+    - &localtime /etc/localtime:/etc/localtime:ro
+    - &timezone /etc/timezone:/etc/timezone:ro
+
+x-mongo: &mongo
+  <<: *default
+  image: mongo:7.0.16
+  environment:
+    MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-root}
+    MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-password}
+  command: |
+    mongod --replSet rs0 --keyFile /secrets/rs0.key
+  volumes:
+    - *localtime
+    - *timezone
+    - ./secrets/rs0.key:/secrets/rs0.key
+  entrypoint:
+    - bash
+    - -c
+    - |
+      chmod 400 /secrets/rs0.key
+      chown 999:999 /secrets/rs0.key
+      exec docker-entrypoint.sh $$@
+
+name: apollo-nuxt
+services:
+  mongo1:
+    <<: *mongo
+    ports:
+      - 27017:27017
+
+  mongo2:
+    <<: *mongo
+    ports:
+      - 27018:27017
+
+  mongo3:
+    <<: *mongo
+    ports:
+      - 27019:27017
+
+  redis:
+    <<: *default
+    image: redis:7.4.1-alpine3.20
+    ports:
+      - 6379:6379

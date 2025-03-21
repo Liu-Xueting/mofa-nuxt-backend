@@ -1,0 +1,175 @@
+diff --git a/dist/module.d.mts b/dist/module.d.mts
+index 880abe0cda37f3c18d7884c2814a7fe4b4e2ba5f..6fc1db8376c48cfbf6f35f3306e4f578715269f8 100644
+--- a/dist/module.d.mts
++++ b/dist/module.d.mts
+@@ -1,27 +1,27 @@
+ import * as _nuxt_schema from '@nuxt/schema';
+ import { ReferenceConfiguration } from '@scalar/api-reference';
+ 
+-type Configuration = Omit<ReferenceConfiguration, 'layout' | 'isEditable' | 'onSpecUpdate' | 'theme'> & {
+-    /**
+-     * Whether to show scalar in Nuxt DevTools
+-     *
+-     * @default true
+-     */
+-    devtools: boolean;
+-    /**
+-     * The theme to use for the reference
+-     *
+-     * @default undefined (nuxt theme)
+-     */
+-    theme?: ReferenceConfiguration['theme'];
++export type Configuration = Omit<ReferenceConfiguration, 'layout' | 'isEditable' | 'onSpecUpdate' | 'theme'> & {
++  /**
++   * Whether to show scalar in Nuxt DevTools
++   *
++   * @default true
++   */
++  devtools: boolean;
++  /**
++   * The theme to use for the reference
++   *
++   * @default undefined (nuxt theme)
++   */
++  theme?: ReferenceConfiguration['theme'];
+ };
+ 
+ type ModuleOptions = {
+-    /**
+-     * For multiple references, pass an array of config objects into
+-     * configurations. These configurations will extend over the base config
+-     */
+-    configurations: Omit<Configuration, 'devtools'>[];
++  /**
++   * For multiple references, pass an array of config objects into
++   * configurations. These configurations will extend over the base config
++   */
++  configurations: Omit<Configuration, 'devtools'>[];
+ } & Configuration;
+ declare const _default: _nuxt_schema.NuxtModule<ModuleOptions>;
+ 
+diff --git a/dist/module.d.ts b/dist/module.d.ts
+index 880abe0cda37f3c18d7884c2814a7fe4b4e2ba5f..6fc1db8376c48cfbf6f35f3306e4f578715269f8 100644
+--- a/dist/module.d.ts
++++ b/dist/module.d.ts
+@@ -1,27 +1,27 @@
+ import * as _nuxt_schema from '@nuxt/schema';
+ import { ReferenceConfiguration } from '@scalar/api-reference';
+ 
+-type Configuration = Omit<ReferenceConfiguration, 'layout' | 'isEditable' | 'onSpecUpdate' | 'theme'> & {
+-    /**
+-     * Whether to show scalar in Nuxt DevTools
+-     *
+-     * @default true
+-     */
+-    devtools: boolean;
+-    /**
+-     * The theme to use for the reference
+-     *
+-     * @default undefined (nuxt theme)
+-     */
+-    theme?: ReferenceConfiguration['theme'];
++export type Configuration = Omit<ReferenceConfiguration, 'layout' | 'isEditable' | 'onSpecUpdate' | 'theme'> & {
++  /**
++   * Whether to show scalar in Nuxt DevTools
++   *
++   * @default true
++   */
++  devtools: boolean;
++  /**
++   * The theme to use for the reference
++   *
++   * @default undefined (nuxt theme)
++   */
++  theme?: ReferenceConfiguration['theme'];
+ };
+ 
+ type ModuleOptions = {
+-    /**
+-     * For multiple references, pass an array of config objects into
+-     * configurations. These configurations will extend over the base config
+-     */
+-    configurations: Omit<Configuration, 'devtools'>[];
++  /**
++   * For multiple references, pass an array of config objects into
++   * configurations. These configurations will extend over the base config
++   */
++  configurations: Omit<Configuration, 'devtools'>[];
+ } & Configuration;
+ declare const _default: _nuxt_schema.NuxtModule<ModuleOptions>;
+ 
+diff --git a/dist/module.mjs b/dist/module.mjs
+index 6ac7007c4988f469de7cbbfe4b04f4957105633f..230fc11e6553fd2a1184fe9e4e1efbf670f2c926 100644
+--- a/dist/module.mjs
++++ b/dist/module.mjs
+@@ -89,7 +89,7 @@ const module = defineNuxtModule({
+         });
+       });
+     }
+-    addPlugin(resolver.resolve("./runtime/plugins/hydrateClient"));
++    // addPlugin(resolver.resolve("./runtime/plugins/hydrateClient"));
+   }
+ });
+ 
+diff --git a/dist/runtime/components/ScalarApiReference.vue b/dist/runtime/components/ScalarApiReference.vue
+index 33f30b17c49cfa43ee1430af8bda8667bea249b4..b6bc6deb64560e72530798afe61692ffe024ce6f 100644
+--- a/dist/runtime/components/ScalarApiReference.vue
++++ b/dist/runtime/components/ScalarApiReference.vue
+@@ -2,7 +2,7 @@
+ import { ModernLayout, parse } from '@scalar/api-reference'
+ import type { ReferenceConfiguration } from '@scalar/types/legacy'
+ import { useHead, useRequestURL, useSeoMeta } from '#imports'
+-import type { Configuration } from '~/src/types'
++import type { Configuration } from '../../types'
+ import { reactive, ref, toRaw } from 'vue'
+ 
+ const props = defineProps<{
+diff --git a/dist/runtime/pages/ScalarPage.vue b/dist/runtime/pages/ScalarPage.vue
+index 379ba23a0f229b33e0bcc82bab0c86a526742f5c..849536770e1c18d339458c98ba2f157c35510092 100644
+--- a/dist/runtime/pages/ScalarPage.vue
++++ b/dist/runtime/pages/ScalarPage.vue
+@@ -1,6 +1,6 @@
+ <script lang="ts" setup>
+ import { useRoute } from '#imports'
+-import type { Meta } from '~/src/types'
++import type { Meta } from '../../types'
+ 
+ const route = useRoute()
+ const meta = route.meta as Meta
+@@ -17,5 +17,7 @@ if (
+ </script>
+ 
+ <template>
+-  <ScalarApiReference :configuration="meta.configuration" />
++  <div>
++    <ScalarApiReference :configuration="meta.configuration" />
++  </div>
+ </template>
+diff --git a/dist/types.d.mts b/dist/types.d.mts
+index c35126a3d6e70e3902b1b892e4405a79989dc6cf..18e654bd42c59f1b232dd9a7460a617bfd2625e3 100644
+--- a/dist/types.d.mts
++++ b/dist/types.d.mts
+@@ -1 +1,8 @@
+-export { type ModuleOptions, default } from './module.js'
++import type { Configuration } from './module.js'
++
++export { type ModuleOptions, type Configuration, type default } from './module.js'
++
++export type Meta = {
++  configuration: Configuration
++  isOpenApiEnabled: boolean
++}
+diff --git a/dist/types.d.ts b/dist/types.d.ts
+index 227198af98b789285360535100bec5dd4ed916f6..134ff1ea01983305096ce643b182574a935415f1 100644
+--- a/dist/types.d.ts
++++ b/dist/types.d.ts
+@@ -1 +1,8 @@
+-export { type ModuleOptions, default } from './module'
++import type { Configuration } from './module'
++
++export { type ModuleOptions, type Configuration, type default } from './module'
++
++export type Meta = {
++  configuration: Configuration
++  isOpenApiEnabled: boolean
++}

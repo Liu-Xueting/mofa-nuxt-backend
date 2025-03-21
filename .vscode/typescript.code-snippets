@@ -1,0 +1,77 @@
+{
+  "Define Event Handler": {
+    "prefix": "define",
+    "scope": "typescript",
+    "body": [
+      "export default defineEventHandler(wrap(async (event) => {",
+      "  const body = await validateBody(event, $1)",
+      "",
+      "  return Result.ok()",
+      "}))"
+    ],
+    "description": "Create a new API endpoint handler with validation"
+  },
+  "OpenAPI GET": {
+    "prefix": "openapi-get",
+    "scope": "typescript",
+    "body": [
+      "/**",
+      " * @openapi",
+      " * $1:",
+      " *   get:",
+      " *     summary: $2",
+      " *     description: $3",
+      " *     tags:",
+      " *      - $4",
+      " *     parameters:",
+      " *      - name: id",
+      " *        in: path",
+      " *        description: $5 ID",
+      " *        required: true",
+      " *        type: string",
+      " *      - name: page",
+      " *        in: query",
+      " *        description: 页码",
+      " *        required: false",
+      " *        type: integer",
+      " *        default: 1",
+      " *      - name: size",
+      " *        in: query",
+      " *        description: 每页数量",
+      " *        required: false",
+      " *        type: integer",
+      " *        default: 10",
+      " *     responses:",
+      " *       200:",
+      " *         description: '`ResultType<$6>`'",
+      " */"
+    ],
+    "description": "Generate OpenAPI documentation comment"
+  },
+  "OpenAPI POST": {
+    "prefix": "openapi-post",
+    "scope": "typescript",
+    "body": [
+      "/**",
+      " * @openapi",
+      " * $1:",
+      " *   post:",
+      " *     summary: $2",
+      " *     description: $3",
+      " *     tags:",
+      " *      - $4",
+      " *     requestBody:",
+      " *       description: $5",
+      " *       required: true",
+      " *       content:",
+      " *         application/json:",
+      " *           schema:",
+      " *             \\$ref: '#/definitions/$6'",
+      " *     responses:",
+      " *       200:",
+      " *         description: '`ResultType<$7>`'",
+      " */"
+    ],
+    "description": "Generate OpenAPI documentation comment"
+  }
+}
